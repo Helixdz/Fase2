@@ -1,0 +1,40 @@
+# Default values — override per environment or via --set flags in CI/CD
+
+grafana:
+  image:
+    repository: ""          # Set by CI/CD pipeline (ECR URL)
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  service:
+    type: LoadBalancer
+    port: 3000
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  adminPassword: ""         # Set via Kubernetes secret / GitHub Actions secret
+  replicas: 1
+
+prometheus:
+  image:
+    repository: ""          # Set by CI/CD pipeline (ECR URL)
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 9090
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+  retention: "15d"
+  storageSize: "10Gi"
+  replicas: 1
+
+namespace: monitoring
