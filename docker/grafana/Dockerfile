@@ -8,10 +8,8 @@ COPY provisioning/ /etc/grafana/provisioning/
 COPY dashboards/ /var/lib/grafana/dashboards/
 
 # Fix permissions
-RUN chown -R grafana:grafana /etc/grafana/provisioning /var/lib/grafana/dashboards
-
-USER grafana
-
+RUN chown -R 472:472 /etc/grafana/provisioning /var/lib/grafana/dashboards
+USER 472
 # Environment variables (can be overridden via Helm values / K8s secrets)
 ENV GF_SECURITY_ADMIN_USER=admin \
     GF_PATHS_PROVISIONING=/etc/grafana/provisioning \
