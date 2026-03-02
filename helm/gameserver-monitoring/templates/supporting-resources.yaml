@@ -58,11 +58,6 @@ subjects:
     namespace: {{ .Values.namespace }}
 ---
 apiVersion: v1
-kind: Namespace
-metadata:
-  name: {{ .Values.namespace }}
----
-apiVersion: v1
 kind: Secret
 metadata:
   name: grafana-secret
