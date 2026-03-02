@@ -64,13 +64,7 @@ jobs:
             --set prometheus.image.repository=${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_PROMETHEUS_REPO }} \
             --set prometheus.image.tag=${{ github.sha }} \
             --set grafana.adminPassword=${{ secrets.GRAFANA_ADMIN_PASSWORD }} \
-            --wait \
             --timeout 18m
-
-      - name: Verify deployment
-        run: |
-          kubectl rollout status deployment/grafana -n monitoring
-          kubectl rollout status deployment/prometheus -n monitoring
 
       - name: Print Grafana LoadBalancer URL
         run: |

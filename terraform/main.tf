@@ -146,3 +146,23 @@ resource "aws_iam_role_policy_attachment" "ebs_csi_policy" {
   role       = module.eks.eks_managed_node_groups["default"].iam_role_name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
 }
+
+resource "aws_iam_policy" "eks_describe" {
+  name = "${var.project_name}-eks-describe"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect   = "Allow"
+      Action   = [
+        "eks:DescribeCluster",
+        "eks:ListClusters"
+      ]
+      Resource = "*"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "eks_describe" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.eks_describe.arn
+}
