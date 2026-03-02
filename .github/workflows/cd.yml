@@ -65,7 +65,7 @@ jobs:
             --set prometheus.image.tag=${{ github.sha }} \
             --set grafana.adminPassword=${{ secrets.GRAFANA_ADMIN_PASSWORD }} \
             --wait \
-            --timeout 5m
+            --timeout 18m
 
       - name: Verify deployment
         run: |
