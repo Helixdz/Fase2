@@ -1,0 +1,11 @@
+groups:
+  - name: gameserver-alerts
+    rules:
+      - alert: GameServerDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Game server is down"
+          description: "{{ $labels.instance }} has been down for more than 1 minute."
