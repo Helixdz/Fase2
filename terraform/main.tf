@@ -82,8 +82,8 @@ module "eks" {
     default = {
       instance_types = [var.node_instance_type]
       min_size       = 1
-      max_size       = 3
-      desired_size   = 2
+      max_size       = 1
+      desired_size   = 1
     }
   }
 
