@@ -10,12 +10,11 @@ permissions:
   contents: read
 
 env:
-  AWS_REGION: us-east-1  # Match your terraform variable
+  AWS_REGION: us-east-1
 
 jobs:
   deploy:
     name: Deploy to EKS
-    # Only run when a PR is actually merged (not just closed)
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
@@ -33,12 +32,14 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Set image tags
-        id: tags
-        run: |
-          echo "sha=${{ github.sha }}" >> $GITHUB_OUTPUT
-          echo "grafana_image=${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_GRAFANA_REPO }}:${{ github.sha }}" >> $GITHUB_OUTPUT
-          echo "prometheus_image=${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_PROMETHEUS_REPO }}:${{ github.sha }}" >> $GITHUB_OUTPUT
+      # ── Fetch secrets from Vault ─────────────────────────────────────────
+      - name: Import secrets from Vault
+        uses: hashicorp/vault-action@v3
+        with:
+          url: ${{ secrets.VAULT_ADDR }}
+          token: ${{ secrets.VAULT_TOKEN }}
+          secrets: |
+            secret/data/cicd/grafana admin_password | GRAFANA_ADMIN_PASSWORD
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
@@ -63,8 +64,8 @@ jobs:
             --set grafana.image.tag=${{ github.sha }} \
             --set prometheus.image.repository=${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_PROMETHEUS_REPO }} \
             --set prometheus.image.tag=${{ github.sha }} \
-            --set grafana.adminPassword=${{ secrets.GRAFANA_ADMIN_PASSWORD }} \
-            --timeout 18m
+            --set grafana.adminPassword=${{ env.GRAFANA_ADMIN_PASSWORD }} \
+            --timeout 2m
 
       - name: Print Grafana LoadBalancer URL
         run: |
